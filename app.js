@@ -2,9 +2,9 @@ const express = require("express")
 
 const productRouter = require("./routes/products")
 const connectDatabase = require("./config")
+const { createResponseObject } = require("./utils")
 
 const PORT = 8000
-let databaseClient = connectDatabase()
 
 function createApp() {
     const app = express()
@@ -17,13 +17,8 @@ function createApp() {
 
         // custom middlewares
     })
+    .then(() => connectDatabase())
     .then(() => {
-        // connect to database
-        return  connectDatabase()
-    })
-    .then((connection) => {
-        app.locals.database = connection
-    
         // routers
         app.get("/greetings", (req, res) => {
             return res.send("Greetings! server is running.")
@@ -39,8 +34,10 @@ function createApp() {
             if (res.headersSent) {
               return next(error)
             }
-            res.status(500)
-            res.send(error)
+            res.status(422)
+            res.json(
+                createResponseObject("request failed", error, [])
+            )
           })
     })
 
@@ -57,7 +54,4 @@ function createApp() {
     })
 }
 
-module.exports = {
-    createApp,
-    databaseClient
-} 
+module.exports = createApp 

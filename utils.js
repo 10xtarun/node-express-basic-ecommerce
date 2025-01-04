@@ -6,7 +6,7 @@ function createResponseObject(message, error, data) {
     }
 }
 
-const MONGO_URI = "mongodb://localhost:27017/"
+const MONGO_URI = "mongodb://localhost:27017/mCommerce"
 // "mongodb+srv://10xTarun:8UwM60Y7n0T5B6uP@cluster0.f3zruyr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 module.exports = {
