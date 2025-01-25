@@ -1,10 +1,9 @@
 const express = require("express")
+const jwt = require("jsonwebtoken")
 const { validationResult, checkSchema } = require("express-validator")
 const utils = require("../utils")
 const User = require("../models/user")
 const router = express.Router()
-
-
 
 router.post(
     "/register",
@@ -51,8 +50,6 @@ router.post(
     }
 )
 
-
-
 router.post(
     "/login", 
     checkSchema({
@@ -90,14 +87,18 @@ router.post(
                 throw Error("invalid password")
             }
         })
+        .then(user => {
+            let payload = {
+                email: user.email,
+                id: user.id
+            }
+            let token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 20 })
+
+            payload.accessToken = token
+
+            return res.json(utils.createResponseObject("user login successful", null, payload))
+        })
         .catch(next)
-
-    
-        // res.json(utils.createResponseObject("user login successful", null, loginObj))
-    
-        // res.json(utils.createResponseObject("user login failed", "invalid password", {}))
-    
 })
-
 
 module.exports = router

@@ -1,11 +1,12 @@
 const express = require("express")
 require('dotenv').config()
+const jwt = require("jsonwebtoken")
 
 const productRouter = require("./routes/products")
 const userRouter = require("./routes/user")
 const authRouter = require("./routes/auth")
 const connectDatabase = require("./config")
-const { createResponseObject } = require("./utils")
+const { createResponseObject, authVerification } = require("./utils")
 const ordersRouter = require("./routes/order")
 const User = require("./models/user")
 
@@ -19,22 +20,6 @@ function createApp() {
             app.use(express.urlencoded({ extended: true }))
 
             // custom middlewares
-            app.use((req, res, next) => {
-                try {
-                    console.log("==req.headers ", req.headers)
-                    if (req.headers.authorization) {
-                        if (req.headers.authorization == "Bearer abcd1234") { 
-                            req.user = { email : "10xtarun@gmail.com" }
-                            next() 
-                        } 
-                        else { throw Error("invalid auth token")}
-                    } else {
-                        throw Error("invalid user login")
-                    }
-                } catch (error) {
-                    next(error)
-                }
-            })
         })
         .then(() => connectDatabase())
         .then(() => {
@@ -46,14 +31,15 @@ function createApp() {
 
 
             // add other routers
-            app.use("/products", productRouter)
-            app.use("/users", userRouter)
+            app.use("/products", authVerification, productRouter)
+            app.use("/users", authVerification, userRouter)
             app.use("/auth", authRouter)
-            app.use("/orders", ordersRouter)
+            app.use("/orders", authVerification, ordersRouter)
         })
         .then(() => {
             // default error handler middleware
             app.use((error, req, res, next) => {
+                console.log(error)
                 console.log("error: ", error)
                 if (res.headersSent) {
                     return next(error)

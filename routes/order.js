@@ -23,7 +23,7 @@ router.post(
     }),
     (req, res, next) => {
 
-        console.log("===req.user ", req.user)
+        console.log("===req.user ", req.userEmail)
 
         const result = validationResult(req);
         if (!result.isEmpty()) {
@@ -34,7 +34,7 @@ router.post(
 
         const orderObj = req.body
 
-        return User.findOne({ email: req.user.email })
+        return User.findOne({ email: req.userEmail })
             .then((userDoc) => {
                 console.log("==userDoc ", userDoc)
                 orderObj.userId = userDoc.id
