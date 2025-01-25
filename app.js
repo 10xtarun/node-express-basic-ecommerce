@@ -1,4 +1,5 @@
 const express = require("express")
+require('dotenv').config()
 
 const productRouter = require("./routes/products")
 const userRouter = require("./routes/user")
@@ -7,8 +8,6 @@ const connectDatabase = require("./config")
 const { createResponseObject } = require("./utils")
 const ordersRouter = require("./routes/order")
 const User = require("./models/user")
-
-const PORT = 8000
 
 function createApp() {
     const app = express()
@@ -69,8 +68,8 @@ function createApp() {
         .then(() => {
             console.log("app created")
 
-            app.listen(PORT, () => {
-                console.log("server is listening on port number: ", PORT)
+            app.listen(process.env.PORT, () => {
+                console.log("server is listening on port number: ", process.env.PORT)
             })
         })
         .catch(error => {

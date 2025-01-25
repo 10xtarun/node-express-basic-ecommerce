@@ -4,7 +4,7 @@ const utils = require("../utils")
 const User = require("../models/user")
 const router = express.Router()
 
-router.post(
+router.put(
     "/",
     checkSchema({
         "*": {
@@ -21,6 +21,11 @@ router.post(
             isEmail: {
                 errorMessage: "email should be proper or valid value"
             }
+        },
+        address: {
+            notEmpty: {
+                errorMessage: "address should not be empty"
+            },
         }
     }),
     (req, res, next) => {
@@ -31,11 +36,11 @@ router.post(
             )
         }
 
-        return User.create(req.body)
+        return User.findOneAndUpdate({ email: req.body.email }, req.body, { new: true })
             .then(insertedDoc => {
                 res.status(201)
                 return res.json(
-                    utils.createResponseObject("user created successfully", null, insertedDoc)
+                    utils.createResponseObject("user updated successfully", null, insertedDoc)
                 )
             })
             .catch(error => next(error))

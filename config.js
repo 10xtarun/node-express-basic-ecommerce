@@ -3,10 +3,10 @@ const mongoose = require("mongoose")
 const { MONGO_URI } = require("./utils")
 
 function connectDatabase() {
-    console.log("MONGO URI: ", MONGO_URI)
+    console.log("MONGO URI: ", process.env.MONGO_URI)
     
     return mongoose
-    .connect(MONGO_URI, {})
+    .connect(process.env.MONGO_URI, {})
     .then((connection) => {
         console.log("mongodb connection established")
     })
